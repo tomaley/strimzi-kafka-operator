@@ -8,7 +8,6 @@ import io.fabric8.kubernetes.api.model.Doneable;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.KubernetesResourceList;
 import io.fabric8.kubernetes.api.model.LocalObjectReference;
-import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.Resource;
 import io.strimzi.certs.CertManager;
@@ -30,8 +29,6 @@ import io.strimzi.operator.common.operator.resource.ServiceAccountOperator;
 import io.strimzi.operator.common.operator.resource.ServiceOperator;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
@@ -47,10 +44,6 @@ import java.util.List;
 public abstract class AbstractAssemblyOperator<C extends KubernetesClient, T extends HasMetadata,
         L extends KubernetesResourceList/*<T>*/, D extends Doneable<T>, R extends Resource<T, D>>
     extends AbstractOperator<T, AbstractWatchableResourceOperator<C, T, L, D, R>> {
-
-    private static final Logger log = LogManager.getLogger(AbstractAssemblyOperator.class.getName());
-
-    protected static final int LOCK_TIMEOUT_MS = 10000;
 
     protected final PlatformFeaturesAvailability pfa;
     protected final SecretOperator secretOperations;
@@ -97,20 +90,6 @@ public abstract class AbstractAssemblyOperator<C extends KubernetesClient, T ext
         this.imagePullSecrets = config.getImagePullSecrets();
         this.versions = config.versions();
         this.operationTimeoutMs = config.getOperationTimeoutMs();
-    }
-
-    /**
-     * The name of the given {@code resource}, as read from its metadata.
-     * @param resource The resource
-     */
-    protected static String name(HasMetadata resource) {
-        if (resource != null) {
-            ObjectMeta metadata = resource.getMetadata();
-            if (metadata != null) {
-                return metadata.getName();
-            }
-        }
-        return null;
     }
 
     protected Future<Boolean> delete(Reconciliation reconciliation) {
