@@ -108,8 +108,10 @@ public class TopicOperatorIT extends TopicOperatorBaseIT {
         KafkaTopic kafkaTopic = TopicSerialization.toTopicResource(topic, labels);
         kafkaTopic.getSpec().setReplicas(rf);
 
+        LOGGER.info("Creating topic");
         // Create a Topic Resource
         operation().inNamespace(NAMESPACE).create(kafkaTopic);
+        LOGGER.info("Creating Awaiting ready");
         assertStatusNotReady(context, topicName, expectedMessage);
     }
 
@@ -135,10 +137,10 @@ public class TopicOperatorIT extends TopicOperatorBaseIT {
 
     @Test
     public void testKafkaTopicAddedWithInvalidConfig(VertxTestContext context) throws InterruptedException, ExecutionException, TimeoutException {
+        LOGGER.info("Running test");
         createKafkaTopicResourceError(context, "test-resource-created-with-invalid-config",
                 singletonMap("message.format.version", "zebra"), 1,
                "Invalid value zebra for configuration message.format.version: Version `zebra` is not a valid version");
-        context.completeNow();
     }
 
     @Test
