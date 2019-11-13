@@ -535,7 +535,9 @@ public abstract class TopicOperatorBaseIT extends BaseITST {
             async.countDown();
         });
         try {
-            async.await(600, TimeUnit.SECONDS);
+            if (!async.await(600, TimeUnit.SECONDS)) {
+                context.failNow(new TimeoutException());
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
             context.failNow(e);
